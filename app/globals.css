@@ -50,6 +50,38 @@ button {
   cursor: pointer;
 }
 
+/* Big, high-contrast action buttons */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-radius: 1.5rem;
+  padding: 1.25rem 2.25rem;
+  font-size: 1.875rem;
+  line-height: 1.2;
+  font-weight: 800;
+  box-shadow: 0 6px 16px rgba(194, 65, 12, 0.25);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-primary:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border-radius: 1.5rem;
+  padding: 1.25rem 2.25rem;
+  font-size: 1.875rem;
+  line-height: 1.2;
+  font-weight: 800;
+}
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
 @keyframes pulse-ring {
   0% {
     box-shadow: 0 0 0 0 rgba(194, 65, 12, 0.45);
