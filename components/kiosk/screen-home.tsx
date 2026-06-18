@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Mic, ShoppingBag, Hand } from "lucide-react"
+import Image from "next/image"
+import { Mic, Hand } from "lucide-react"
 import { categories } from "@/lib/menu"
 import { extractKeywords, matchCategory, matchMenu } from "@/lib/intent"
 import { useKiosk } from "./store"
@@ -64,14 +65,17 @@ export function ScreenHome() {
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col items-center justify-center gap-8 px-6 py-12">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <span className="rounded-full bg-secondary px-5 py-2 text-xl font-bold text-secondary-foreground">
-          말로 주문하는 키오스크
-        </span>
-        <h1 className="text-balance text-6xl font-black leading-tight text-foreground">
-          Vorder
-        </h1>
+    <div className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col items-center justify-center gap-8 px-6 py-10">
+      {/* Brand logo with team name baked in */}
+      <div className="flex flex-col items-center gap-4 text-center">
+        <Image
+          src="/malhaeduo-logo.png"
+          alt="말해듀오 - 어르신과 함께하는 음성 주문 도우미"
+          width={300}
+          height={300}
+          priority
+          className="h-auto w-56 sm:w-64"
+        />
         <p className="text-pretty text-3xl font-bold leading-relaxed text-foreground">
           메뉴 이름을 몰라도 괜찮아요.
           <br />
@@ -79,20 +83,32 @@ export function ScreenHome() {
         </p>
       </div>
 
-      {/* Primary voice CTA */}
-      <button
-        type="button"
-        onClick={startVoice}
-        className="animate-pulse-ring flex w-full max-w-2xl flex-col items-center gap-4 rounded-[2rem] bg-primary px-8 py-10 text-primary-foreground shadow-xl transition hover:brightness-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
-      >
-        <span className="flex h-24 w-24 items-center justify-center rounded-full bg-primary-foreground/20">
-          <Mic className="h-14 w-14" aria-hidden="true" />
-        </span>
-        <span className="text-balance text-center text-4xl font-black leading-tight">
-          음성으로 도와드릴까요?
-        </span>
-        <span className="text-2xl font-bold opacity-90">눌러서 말씀하세요</span>
-      </button>
+      {/* Two clear ways to start */}
+      <div className="flex w-full max-w-2xl flex-col gap-4">
+        <button
+          type="button"
+          onClick={startVoice}
+          className="animate-pulse-ring flex w-full items-center justify-center gap-5 rounded-[2rem] bg-primary px-8 py-9 text-primary-foreground shadow-xl transition hover:brightness-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
+        >
+          <span className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-foreground/20">
+            <Mic className="h-12 w-12" aria-hidden="true" />
+          </span>
+          <span className="text-balance text-left text-4xl font-black leading-tight">
+            음성 주문하기
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={browse}
+          className="flex w-full items-center justify-center gap-5 rounded-[2rem] border-4 border-primary bg-card px-8 py-9 text-card-foreground shadow-sm transition hover:bg-secondary focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
+        >
+          <span className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary">
+            <Hand className="h-12 w-12 text-primary" aria-hidden="true" />
+          </span>
+          <span className="text-4xl font-black leading-tight">직접 주문하기</span>
+        </button>
+      </div>
 
       {/* keyword hints: short words, not a fixed sentence to recite */}
       <div className="flex w-full max-w-2xl flex-col items-center gap-3">
@@ -103,7 +119,7 @@ export function ScreenHome() {
           {["시원한 거", "따뜻한 거", "단 거", "커피", "초코", "과일"].map((w) => (
             <span
               key={w}
-              className="rounded-full bg-secondary px-4 py-2 text-xl font-bold text-secondary-foreground"
+              className="rounded-full bg-pink px-4 py-2 text-xl font-bold text-pink-foreground"
             >
               {`"${w}"`}
             </span>
@@ -119,16 +135,6 @@ export function ScreenHome() {
           {error}
         </p>
       )}
-
-      {/* Direct touch path */}
-      <button
-        type="button"
-        onClick={browse}
-        className="flex w-full max-w-2xl items-center justify-center gap-4 rounded-3xl border-2 border-border bg-card px-8 py-7 text-card-foreground shadow-sm transition hover:bg-secondary focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
-      >
-        <Hand className="h-10 w-10 text-primary" aria-hidden="true" />
-        <span className="text-3xl font-extrabold">직접 손으로 메뉴 보기</span>
-      </button>
 
       {/* Quick category chips */}
       <div className="flex w-full max-w-2xl flex-wrap items-center justify-center gap-3">
@@ -149,8 +155,7 @@ export function ScreenHome() {
         ))}
       </div>
 
-      <p className="flex items-center gap-2 text-lg font-bold text-muted-foreground">
-        <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+      <p className="text-lg font-bold text-muted-foreground">
         주문은 천천히 하셔도 괜찮습니다
       </p>
     </div>

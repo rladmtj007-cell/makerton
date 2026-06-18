@@ -11,9 +11,9 @@ const notoSansKr = Noto_Sans_KR({
 })
 
 export const metadata: Metadata = {
-  title: "Vorder · 말로 주문하는 AI 키오스크",
+  title: "말해듀오 · 말로 주문하는 키오스크",
   description:
-    "메뉴 이름을 몰라도 괜찮아요. 말로 설명하면 AI가 메뉴를 찾아 주문까지 도와드립니다.",
+    "메뉴 이름을 몰라도 괜찮아요. 말로 설명하면 메뉴를 찾아 주문까지 도와드립니다.",
 }
 
 export const viewport: Viewport = {
