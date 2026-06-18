@@ -40,6 +40,7 @@ interface KioskState {
   voiceMode: boolean
   cart: CartLine[]
   recommendations: MenuItem[]
+  heardKeywords: string[]
   selectedItem: MenuItem | null
   optionsReturnTo: Step
   browseCategory: CategoryId
@@ -50,7 +51,7 @@ interface KioskState {
 
   go: (step: Step) => void
   setVoiceMode: (on: boolean) => void
-  setRecommendations: (items: MenuItem[]) => void
+  setRecommendations: (items: MenuItem[], keywords?: string[]) => void
   setBrowseCategory: (c: CategoryId) => void
   beginOptions: (item: MenuItem, returnTo: Step) => void
   addToCart: (line: Omit<CartLine, "lineId">) => void
@@ -77,6 +78,7 @@ export function KioskProvider({ children }: { children: ReactNode }) {
   const [voiceMode, setVoiceModeState] = useState(false)
   const [cart, setCart] = useState<CartLine[]>([])
   const [recommendations, setRecommendationsState] = useState<MenuItem[]>([])
+  const [heardKeywords, setHeardKeywords] = useState<string[]>([])
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
   const [optionsReturnTo, setOptionsReturnTo] = useState<Step>("browse")
   const [browseCategory, setBrowseCategoryState] = useState<CategoryId>("coffee")
@@ -100,8 +102,9 @@ export function KioskProvider({ children }: { children: ReactNode }) {
     [speech],
   )
 
-  const setRecommendations = useCallback((items: MenuItem[]) => {
+  const setRecommendations = useCallback((items: MenuItem[], keywords: string[] = []) => {
     setRecommendationsState(items)
+    setHeardKeywords(keywords)
   }, [])
 
   const setBrowseCategory = useCallback((c: CategoryId) => {
@@ -145,6 +148,7 @@ export function KioskProvider({ children }: { children: ReactNode }) {
     speech.cancelAll()
     setCart([])
     setRecommendationsState([])
+    setHeardKeywords([])
     setSelectedItem(null)
     setPhoneState("")
     setPointsEarnedState(0)
@@ -172,6 +176,7 @@ export function KioskProvider({ children }: { children: ReactNode }) {
     voiceMode,
     cart,
     recommendations,
+    heardKeywords,
     selectedItem,
     optionsReturnTo,
     browseCategory,

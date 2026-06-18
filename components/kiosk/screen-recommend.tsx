@@ -25,7 +25,7 @@ const ORDINALS: Record<string, number> = {
 }
 
 export function ScreenRecommend() {
-  const { recommendations, voiceMode, speech, beginOptions, go } = useKiosk()
+  const { recommendations, heardKeywords, voiceMode, speech, beginOptions, go } = useKiosk()
   const startedRef = useRef(false)
 
   function pick(item: MenuItem) {
@@ -79,13 +79,28 @@ export function ScreenRecommend() {
       <TopBar title="찾은 메뉴" />
 
       <div className="mx-auto w-full max-w-4xl flex-1 px-5 py-6">
-        <div className="mb-6 flex items-center gap-3 rounded-3xl bg-secondary px-6 py-5">
-          <Sparkles className="h-9 w-9 shrink-0 text-primary" aria-hidden="true" />
-          <p className="text-pretty text-2xl font-extrabold leading-snug text-secondary-foreground">
-            말씀하신 내용으로 이런 메뉴를 찾았어요.
-            <br />
-            마음에 드는 것을 골라 주세요.
-          </p>
+        <div className="mb-6 flex flex-col gap-3 rounded-3xl bg-secondary px-6 py-5">
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-9 w-9 shrink-0 text-primary" aria-hidden="true" />
+            <p className="text-pretty text-2xl font-extrabold leading-snug text-secondary-foreground">
+              말씀하신 내용으로 이런 메뉴를 찾았어요.
+              <br />
+              마음에 드는 것을 골라 주세요.
+            </p>
+          </div>
+          {heardKeywords.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 pl-12">
+              <span className="text-xl font-bold text-muted-foreground">들은 내용:</span>
+              {heardKeywords.map((kw) => (
+                <span
+                  key={kw}
+                  className="rounded-full bg-card px-4 py-1.5 text-xl font-bold text-primary"
+                >
+                  {kw}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {recommendations.length === 0 ? (

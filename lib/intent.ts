@@ -1,54 +1,136 @@
 import { categories, menuItems, type CategoryId, type MenuItem } from "./menu"
 
-/** Extra synonym hints that map spoken words to menu keywords. */
-const synonyms: Record<string, string[]> = {
-  차가운: ["차가운", "시원한", "아이스"],
-  시원한: ["차가운", "시원한", "아이스"],
-  아이스: ["차가운", "시원한", "아이스"],
-  따뜻한: ["따뜻한", "뜨거운", "핫"],
-  뜨거운: ["따뜻한", "뜨거운", "핫"],
-  단: ["달콤한", "단"],
-  달달한: ["달콤한", "단"],
-  달콤한: ["달콤한", "단"],
+/**
+ * Spoken word -> canonical menu keyword(s).
+ * The user can speak naturally; we map however they phrase it onto the
+ * keywords that actually live on the menu items. This is the heart of the
+ * keyword-centric matching: we never ask the user to recite a fixed sentence.
+ */
+const SYNONYMS: Record<string, string[]> = {
+  // 온도 - cold
+  차가운: ["차가운", "시원한"],
+  차가워: ["차가운", "시원한"],
+  시원한: ["차가운", "시원한"],
+  시원: ["차가운", "시원한"],
+  아이스: ["차가운", "시원한"],
+  찬: ["차가운", "시원한"],
+  냉: ["차가운", "시원한"],
+  얼음: ["차가운", "시원한"],
+  // 온도 - hot
+  따뜻한: ["따뜻한"],
+  따듯한: ["따뜻한"],
+  뜨거운: ["따뜻한"],
+  뜨신: ["따뜻한"],
+  핫: ["따뜻한"],
+  더운: ["따뜻한"],
+  // 단맛
+  단: ["단", "달콤한"],
+  달달한: ["단", "달콤한"],
+  달달: ["단", "달콤한"],
+  달콤한: ["단", "달콤한"],
+  달콤: ["단", "달콤한"],
+  단거: ["단", "달콤한"],
+  단것: ["단", "달콤한"],
+  당: ["단", "달콤한"],
+  // 쓴맛/진함
   쓴: ["쓴", "진한"],
+  쓰: ["쓴", "진한"],
+  씁쓸한: ["쓴", "진한"],
+  진한: ["진한", "쓴"],
+  진하게: ["진한", "쓴"],
+  강한: ["진한"],
+  // 부드러움
+  부드러운: ["부드러운", "우유"],
+  순한: ["부드러운"],
+  연한: ["부드러운"],
+  // 초콜릿
   초콜렛: ["초코", "초콜릿"],
   초콜릿: ["초코", "초콜릿"],
   초코: ["초코", "초콜릿"],
+  // 고소함/견과
+  고소한: ["고소한", "견과"],
+  견과: ["견과", "고소한"],
+  땅콩: ["견과"],
+  너트: ["견과"],
+  // 우유
+  우유: ["우유"],
+  밀크: ["우유"],
+  라떼: ["라떼", "우유"],
+  // 과일/상큼
+  과일: ["과일"],
+  상큼한: ["상큼한", "과일"],
+  새콤한: ["상큼한", "과일"],
+  새콤달콤: ["상큼한", "달콤한"],
+  // 커피
+  커피: ["커피"],
+  // 종류 힌트
+  차: ["차"],
+  스무디: ["스무디"],
+  에이드: ["에이드"],
+  케이크: ["케이크"],
+  빵: ["빵"],
+  과자: ["쿠키"],
+  쿠키: ["쿠키"],
+}
+
+/** All keyword strings that actually exist on menu items. */
+const ALL_KEYWORDS = Array.from(new Set(menuItems.flatMap((i) => i.keywords)))
+
+/**
+ * Pull canonical menu keywords out of a free-form spoken sentence.
+ * Works two ways: (1) any menu keyword literally present, and
+ * (2) any natural synonym the user used, mapped onto menu keywords.
+ */
+export function extractKeywords(utterance: string): string[] {
+  const text = utterance.replace(/\s+/g, "")
+  const found = new Set<string>()
+
+  // literal menu keywords spoken directly
+  for (const kw of ALL_KEYWORDS) {
+    if (text.includes(kw)) found.add(kw)
+  }
+  // natural synonyms mapped to canonical keywords
+  for (const [variant, mapped] of Object.entries(SYNONYMS)) {
+    if (text.includes(variant)) mapped.forEach((m) => found.add(m))
+  }
+
+  return Array.from(found)
 }
 
 export interface MatchResult {
   item: MenuItem
   score: number
+  /** which keywords on this item the user actually hit */
+  matchedKeywords: string[]
 }
 
 /**
- * Lightweight on-device intent matching. Scores each menu item by how many of
- * its keywords appear in the spoken sentence. No external AI call required, so
- * it works fully hands-free in the browser.
+ * Keyword-centric menu matching. We extract keywords from whatever the user
+ * said and score each menu item by how many of those keywords it carries.
+ * No fixed phrasing required and no external AI call, so it runs fully
+ * hands-free in the browser.
  */
 export function matchMenu(utterance: string, limit = 3): MatchResult[] {
   if (!utterance.trim()) return []
   const text = utterance.replace(/\s+/g, "")
-
-  // expand synonyms present in the utterance
-  const expanded = new Set<string>()
-  Object.entries(synonyms).forEach(([word, mapped]) => {
-    if (text.includes(word)) mapped.forEach((m) => expanded.add(m))
-  })
+  const heard = new Set(extractKeywords(utterance))
 
   const results: MatchResult[] = menuItems.map((item) => {
     let score = 0
+    const matchedKeywords: string[] = []
 
-    // direct name hit is a strong signal
+    // direct menu-name hit is the strongest signal
     const compactName = item.name.replace(/\s+/g, "")
-    if (text.includes(compactName)) score += 6
+    if (text.includes(compactName)) score += 8
 
     item.keywords.forEach((kw) => {
-      if (text.includes(kw)) score += 2
-      if (expanded.has(kw)) score += 1
+      if (heard.has(kw)) {
+        score += 2
+        matchedKeywords.push(kw)
+      }
     })
 
-    return { item, score }
+    return { item, score, matchedKeywords }
   })
 
   return results

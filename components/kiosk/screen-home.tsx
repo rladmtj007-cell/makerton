@@ -3,12 +3,12 @@
 import { useState } from "react"
 import { Mic, ShoppingBag, Hand } from "lucide-react"
 import { categories } from "@/lib/menu"
-import { matchCategory, matchMenu } from "@/lib/intent"
+import { extractKeywords, matchCategory, matchMenu } from "@/lib/intent"
 import { useKiosk } from "./store"
 import { MenuIcon } from "./icon"
 
 const GREETING =
-  "안녕하세요. 무엇을 드시고 싶으세요? 드시고 싶은 것을 편하게 말씀해 주세요. 예를 들어, 초콜릿 들어간 시원한 거 주세요, 라고 말하시면 됩니다."
+  "안녕하세요. 무엇을 드시고 싶으세요? 편하게 말씀해 주세요. 제가 알아듣고 찾아 드릴게요."
 
 export function ScreenHome() {
   const {
@@ -21,9 +21,14 @@ export function ScreenHome() {
   const [error, setError] = useState("")
 
   function handleUtterance(text: string) {
+    // pull keywords out of whatever the user said, then match menus by them
+    const heard = extractKeywords(text)
     const results = matchMenu(text)
     if (results.length > 0) {
-      setRecommendations(results.map((r) => r.item))
+      setRecommendations(
+        results.map((r) => r.item),
+        heard,
+      )
       go("recommend")
       return
     }
@@ -33,10 +38,12 @@ export function ScreenHome() {
       go("browse")
       return
     }
-    // no match: ask again
-    speech.speak("죄송해요. 잘 못 들었어요. 다시 한 번 천천히 말씀해 주세요.").then(() => {
-      speech.listen(handleUtterance)
-    })
+    // nothing recognized: invite them to try again in their own words
+    speech
+      .speak("죄송해요. 잘 못 들었어요. 드시고 싶은 맛이나 종류를 다시 한 번 말씀해 주세요.")
+      .then(() => {
+        speech.listen(handleUtterance)
+      })
   }
 
   async function startVoice() {
@@ -85,6 +92,23 @@ export function ScreenHome() {
         </span>
         <span className="text-2xl font-bold opacity-90">눌러서 말씀하세요</span>
       </button>
+
+      {/* keyword hints: short words, not a fixed sentence to recite */}
+      <div className="flex w-full max-w-2xl flex-col items-center gap-3">
+        <p className="text-xl font-bold text-muted-foreground">
+          이렇게 편하게 말씀하셔도 돼요
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {["시원한 거", "따뜻한 거", "단 거", "커피", "초코", "과일"].map((w) => (
+            <span
+              key={w}
+              className="rounded-full bg-secondary px-4 py-2 text-xl font-bold text-secondary-foreground"
+            >
+              {`"${w}"`}
+            </span>
+          ))}
+        </div>
+      </div>
 
       {error && (
         <p
