@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { Mic, Hand } from "lucide-react"
 import { extractKeywords, matchCategory, matchMenu } from "@/lib/intent"
 import { useKiosk } from "./store"
@@ -58,17 +57,9 @@ export function ScreenHome() {
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-5 py-6">
-      {/* HERO: big brand area at the top, like a kiosk promo screen */}
-      <section className="flex flex-1 flex-col items-center justify-center gap-6 rounded-[2.5rem] bg-secondary px-6 py-8 text-center">
-        <Image
-          src="/malhaeduo-logo.png"
-          alt="말해듀오 - 어르신과 함께하는 음성 주문 도우미"
-          width={420}
-          height={420}
-          priority
-          className="h-auto w-64 sm:w-80"
-        />
-        <h1 className="text-balance text-4xl font-black leading-tight text-foreground sm:text-5xl">
+      {/* HERO: simple text-only greeting */}
+      <section className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
+        <h1 className="text-balance text-5xl font-black leading-tight text-foreground">
           말로 주문하는 키오스크
         </h1>
         <p className="text-pretty text-2xl font-bold leading-relaxed text-muted-foreground sm:text-3xl">
