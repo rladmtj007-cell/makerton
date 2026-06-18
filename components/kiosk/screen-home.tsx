@@ -95,7 +95,7 @@ export function ScreenHome() {
           </span>
           <span className="flex flex-col items-start">
             <span className="text-4xl font-black leading-tight text-primary">직접 주문하기</span>
-            <span className="text-xl font-bold text-muted-foreground">손으로 골라 보세요</span>
+            <span className="text-xl font-bold text-muted-foreground">화면을 눌러주세요</span>
           </span>
         </button>
       </section>
