@@ -196,6 +196,18 @@ export const menuItems: MenuItem[] = [
     keywords: ["초코", "초콜릿", "달콤한", "단", "우유", "라떼", "커피아닌"],
   },
   {
+    id: "choco-shake",
+    name: "초코쉐이크",
+    category: "noncoffee",
+    price: w(5300),
+    description: "시원하게 갈아 만든 진한 초코 음료",
+    icon: "CupSoda",
+    image: "/menu/choco-shake.png",
+    temperatures: ["ice"],
+    hasSize: true,
+    keywords: ["초코", "초콜릿", "달콤한", "단", "시원한", "차가운", "쉐이크", "우유", "커피아닌"],
+  },
+  {
     id: "green-tea-latte",
     name: "녹차라떼",
     category: "noncoffee",

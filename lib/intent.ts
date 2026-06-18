@@ -114,6 +114,7 @@ export function matchMenu(utterance: string, limit = 3): MatchResult[] {
   if (!utterance.trim()) return []
   const text = utterance.replace(/\s+/g, "")
   const heard = new Set(extractKeywords(utterance))
+  const wantTemp = parseTemperature(utterance) // "hot" | "ice" | null
 
   const results: MatchResult[] = menuItems.map((item) => {
     let score = 0
@@ -129,6 +130,20 @@ export function matchMenu(utterance: string, limit = 3): MatchResult[] {
         matchedKeywords.push(kw)
       }
     })
+
+    // a heard flavor word that appears in the menu name itself is a much
+    // stronger signal (e.g. "초코" -> 초코라떼/초코쉐이크 beat 카페모카).
+    heard.forEach((kw) => {
+      if (compactName.includes(kw)) score += 3
+    })
+
+    // temperature awareness: prefer drinks that can be served the way the
+    // user asked, and push out ones that cannot (e.g. hot-only when they
+    // clearly asked for something cold).
+    if (wantTemp && item.temperatures && item.temperatures.length > 0) {
+      if (item.temperatures.includes(wantTemp)) score += 3
+      else score -= 6
+    }
 
     return { item, score, matchedKeywords }
   })

@@ -55,10 +55,26 @@ export function useSpeech(): UseSpeechResult {
     if (hasSynth) {
       const pickVoice = () => {
         const voices = window.speechSynthesis.getVoices()
-        koVoiceRef.current =
-          voices.find((v) => v.lang === "ko-KR") ||
-          voices.find((v) => v.lang.startsWith("ko")) ||
-          null
+        const ko = voices.filter((v) => v.lang === "ko-KR" || v.lang.startsWith("ko"))
+        // Prefer warm, friendly-sounding Korean voices (mostly female) that are
+        // commonly available across browsers/OSes, in order of niceness.
+        const preferred = [
+          "yuna",
+          "유나",
+          "heami",
+          "혜미",
+          "seoyeon",
+          "서연",
+          "sora",
+          "google 한국의",
+          "google 한국",
+          "nara",
+          "female",
+          "여성",
+        ]
+        const byPreference =
+          ko.find((v) => preferred.some((p) => v.name.toLowerCase().includes(p))) || null
+        koVoiceRef.current = byPreference || ko[0] || null
       }
       pickVoice()
       window.speechSynthesis.onvoiceschanged = pickVoice
@@ -90,8 +106,10 @@ export function useSpeech(): UseSpeechResult {
       const utter = new SpeechSynthesisUtterance(text)
       utter.lang = "ko-KR"
       if (koVoiceRef.current) utter.voice = koVoiceRef.current
-      utter.rate = 0.95
-      utter.pitch = 1
+      // slower & a touch higher = clearer and warmer for older guests
+      utter.rate = 0.92
+      utter.pitch = 1.08
+      utter.volume = 1
       utter.onstart = () => setSpeaking(true)
       utter.onend = () => {
         setSpeaking(false)

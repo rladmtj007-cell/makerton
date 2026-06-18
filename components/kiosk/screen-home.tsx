@@ -21,9 +21,10 @@ export function ScreenHome() {
   const [error, setError] = useState("")
 
   function handleUtterance(text: string) {
-    // pull keywords out of whatever the user said, then match menus by them
+    // pull keywords out of whatever the user said, then match menus by them.
+    // we surface the top 2 so the recommend screen can show big photo cards.
     const heard = extractKeywords(text)
-    const results = matchMenu(text)
+    const results = matchMenu(text, 2)
     if (results.length > 0) {
       setRecommendations(
         results.map((r) => r.item),
