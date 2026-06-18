@@ -69,30 +69,34 @@ export function ScreenHome() {
         </p>
       </section>
 
-      {/* Two big tiles, side by side, like the reference kiosk */}
-      <section className="mt-6 grid grid-cols-2 gap-4">
+      {/* Two big tiles, stacked vertically */}
+      <section className="mt-6 flex flex-col gap-4">
         <button
           type="button"
           onClick={startVoice}
-          className="animate-pulse-ring flex flex-col items-center justify-center gap-4 rounded-[2rem] bg-primary px-6 py-10 text-primary-foreground shadow-xl transition hover:brightness-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
+          className="animate-pulse-ring flex items-center justify-center gap-6 rounded-[2rem] bg-primary px-8 py-8 text-primary-foreground shadow-xl transition hover:brightness-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
         >
-          <span className="flex h-24 w-24 items-center justify-center rounded-full bg-primary-foreground/20">
-            <Mic className="h-14 w-14" aria-hidden="true" />
+          <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-foreground/20">
+            <Mic className="h-12 w-12" aria-hidden="true" />
           </span>
-          <span className="text-balance text-4xl font-black leading-tight">음성 주문하기</span>
-          <span className="text-xl font-bold opacity-90">눌러서 말씀하세요</span>
+          <span className="flex flex-col items-start">
+            <span className="text-4xl font-black leading-tight">음성 주문하기</span>
+            <span className="text-xl font-bold opacity-90">눌러서 말씀하세요</span>
+          </span>
         </button>
 
         <button
           type="button"
           onClick={browse}
-          className="flex flex-col items-center justify-center gap-4 rounded-[2rem] border-4 border-primary bg-card px-6 py-10 text-card-foreground shadow-sm transition hover:bg-secondary focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
+          className="flex items-center justify-center gap-6 rounded-[2rem] border-4 border-primary bg-card px-8 py-8 text-card-foreground shadow-sm transition hover:bg-secondary focus:outline-none focus-visible:ring-4 focus-visible:ring-ring"
         >
-          <span className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary">
-            <Hand className="h-14 w-14 text-primary" aria-hidden="true" />
+          <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-secondary">
+            <Hand className="h-12 w-12 text-primary" aria-hidden="true" />
           </span>
-          <span className="text-4xl font-black leading-tight text-primary">직접 주문하기</span>
-          <span className="text-xl font-bold text-muted-foreground">손으로 골라 보세요</span>
+          <span className="flex flex-col items-start">
+            <span className="text-4xl font-black leading-tight text-primary">직접 주문하기</span>
+            <span className="text-xl font-bold text-muted-foreground">손으로 골라 보세요</span>
+          </span>
         </button>
       </section>
 
